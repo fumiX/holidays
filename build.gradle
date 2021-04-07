@@ -1,21 +1,9 @@
-plugins {
-    id 'java'
-}
 
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
+subprojects {
+//    sourceCompatibility = 1.8
+//    targetCompatibility = 1.8
 }
 
-dependencies {
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
-
-test {
-    useJUnitPlatform()
-}

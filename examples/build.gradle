@@ -1,0 +1,19 @@
+plugins {
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':lib')
+    implementation 'org.slf4j:slf4j-jdk14:1.7.30'
+}
+
+application {
+    mainClass = 'net.fumix.holidays.Main'
+}

@@ -58,8 +58,8 @@ public class Region {
 
 	public Stream<Holiday> holidaysIn(int year) {
 		return holidays.stream()
-				.filter(h -> h.fromYear.isEmpty() || h.fromYear.get() <= year)
-				.filter(h -> h.toYear.isEmpty() || h.toYear.get() >= year)
+				.filter(h -> !h.fromYear.isPresent() || h.fromYear.get() <= year)
+				.filter(h -> !h.toYear.isPresent() || h.toYear.get() >= year)
 				.map(h -> h.holiday);
 	}
 }
