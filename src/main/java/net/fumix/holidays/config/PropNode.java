@@ -50,4 +50,13 @@ class PropNode {
 	public Optional<String> getValue() {
 		return value;
 	}
+
+	@Override
+	public String toString() {
+		return "PropNode{" +
+				"name='" + name + '\'' +
+				", value=" + value +
+				", children=" + (children != null ? children.size() : "[null]") +
+				'}';
+	}
 }
