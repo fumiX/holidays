@@ -62,4 +62,12 @@ public class Region {
 				.filter(h -> !h.toYear.isPresent() || h.toYear.get() >= year)
 				.map(h -> h.holiday);
 	}
+
+	@Override
+	public String toString() {
+		return "Region{" +
+				"name=" + name +
+				", abbrev=" + abbrev +
+				'}';
+	}
 }

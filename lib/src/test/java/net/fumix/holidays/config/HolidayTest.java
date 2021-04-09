@@ -1,14 +1,14 @@
 package net.fumix.holidays.config;
 
-import net.fumix.holidays.Cache;
+import net.fumix.holidays.impl.Cache;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class HolidayTest {
 
@@ -20,7 +20,7 @@ class HolidayTest {
 
 	@Test
 	void weekdayRelHoliday() {
-		Config config = new Config(new ArrayList<>());
+		Config config = new Config();
 		Region region = new Region("Testland", Optional.empty(), "TE");
 		Cache cache = new Cache(region);
 

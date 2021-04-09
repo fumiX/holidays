@@ -1,20 +1,24 @@
 package net.fumix.holidays.config;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import net.fumix.holidays.Holidays;
+import net.fumix.holidays.impl.HolidaysImpl;
+import net.fumix.holidays.config.properties.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Config {
+	private static final Logger LOG = LoggerFactory.getLogger(Config.class);
 
-	final static Pattern fullPattern = Pattern.compile("(\\d*)-(\\d*)");
-	final static Pattern yearPattern = Pattern.compile("(\\d+)");
+	// Resource paths to the configuration.
+	final static String HOLIDAY_PROPERTIES = "/holiday.properties";
+	final static String REGION_DE_PROPERTIES = "/region_DE.properties";
+	final static String REGION_AT_PROPERTIES = "/region_AT.properties";
 
-	Map<String, Holiday> holidays = new HashMap<>();
-	Map<String, Region> regions = new HashMap<>();
+
+	final LinkedHashMap<String, Holiday> holidays;
+	final LinkedHashMap<String, Region> regions;
 
 	public Optional<Region> regionOf(String abbrev) {
 		return Optional.ofNullable(regions.get(abbrev));
@@ -23,98 +27,42 @@ public class Config {
 
 
 	public static Config fromResources() {
+		final String logPrefix = "[fromResources()]";
 
-		// Holidays
-		final TreeProperties holidayProps = TreeProperties.from(loadProperties("/holiday.properties"));
+		final Config config = new Config();
 
-		final Collection<PropNode> holidayNodes = holidayProps.root.get("holiday")
-				.map(PropNode::getChildren)
-				.orElse(Collections.emptyList());
-
-		List<Holiday> holidays = holidayNodes.stream()
-				.filter(hn -> hn.getValue().isPresent())
-				.map(hn -> Holiday.fromConfig(hn.getName(), hn.getValue().get()))
-				.peek(h -> System.out.println("Loaded: " + h))
-				.collect(Collectors.toList());
-
-		final Config config = new Config(holidays);
-
+		// HolidaysImpl
+		LOG.debug("{} Loading holidays from resource file {}", logPrefix, HOLIDAY_PROPERTIES);
+		final LinkedHashMap<String, String> holidayProperties = new LinkedHashMap<>();
+		PropertiesLoader.load(HOLIDAY_PROPERTIES, holidayProperties::put);
+		HolidayProperties.from(holidayProperties, config::addHoliday);
 
 		// Regions
-		final TreeProperties regionProps = TreeProperties.from(loadProperties("/region.properties"));
-		final Collection<PropNode> regionNodes = regionProps.root.get("region")
-				.map(PropNode::getChildren)
-				.orElse(Collections.emptyList());
+		final LinkedHashMap<String, String> regionProperties = new LinkedHashMap<>();
+		PropertiesLoader.load(REGION_DE_PROPERTIES, regionProperties::put);
+		PropertiesLoader.load(REGION_AT_PROPERTIES, regionProperties::put);
+		RegionProperties.from(regionProperties, config.holidays, config::addRegion);
 
-		for(PropNode regionNode: regionNodes) {
-			final String regionKey = regionNode.getName();
-			final String regionName = regionNode.get("name")
-					.flatMap(PropNode::getValue)
-					.orElseThrow(() -> new IllegalArgumentException("region-properties: Region " + regionKey + " must have a 'name'"));
-
-			final Optional<Region> parent = regionNode.get("parent")
-					.flatMap(PropNode::getValue)
-					.flatMap(config::regionOf);
-			Region region = new Region(regionName, parent, regionKey);
-			final Collection<PropNode> regionHolidayNodes = regionNode.get("holiday")
-					.map(PropNode::getChildren)
-					.orElse(Collections.emptyList());
-			for(PropNode rhn: regionHolidayNodes) {
-				final Holiday holiday = config.holidayOf(rhn.getName())
-						.orElseThrow(() -> new IllegalArgumentException("Holiday '" + rhn.getName() + "' referred to for region '" + regionKey + "' is not defined."));
-				// TODO: process valid year ranges.
-				final Optional<String> value = rhn.getValue();
-				if (value.isPresent() && !value.get().trim().isEmpty()) {
-					final String[] rangeExpressions = value.get().split(",");
-					for(String rangeExpr: rangeExpressions) {
-						final Matcher fullMatcher = fullPattern.matcher(rangeExpr);
-						if (fullMatcher.matches()) {
-							Optional<Integer> yearStart = fullMatcher.group(1).trim().isEmpty() ? Optional.empty() : Optional.of(Integer.parseInt(fullMatcher.group(1)));
-							Optional<Integer> yearEnd = fullMatcher.group(2).trim().isEmpty() ? Optional.empty() : Optional.of(Integer.parseInt(fullMatcher.group(2)));
-							region.withHoliday(holiday, yearStart, yearEnd);
-							continue;
-						}
-
-						final Matcher yearMatcher = yearPattern.matcher(rangeExpr);
-						if (yearMatcher.matches()) {
-							Optional<Integer> yearStart = Optional.of(Integer.parseInt(yearMatcher.group(1)));
-							Optional<Integer> yearEnd = yearStart;
-							region.withHoliday(holiday, yearStart, yearStart);
-							continue;
-						}
-
-						throw new IllegalArgumentException("Validity expression '" + rangeExpr + "' for holiday assignment for region '" + region.getAbbrev() + "' and holiday '" + holiday.getName() + "' is invalid.");
-					}
-				} else {
-					// The holiday has no range expression and is always valid.
-					region.withHoliday(holiday);
-				}
-			}
-			config.addRegion(region);
-		}
 
 		return config;
 	}
 
-	public Config(List<Holiday> _holidays) {
-		this.holidays = _holidays.stream()
-				.collect(Collectors.toMap(h->h.name, h->h));
+	public Config() {
+		this.holidays = new LinkedHashMap<>();
+		this.regions = new LinkedHashMap<>();
 	}
 
-	Config addRegion(Region region) {
+	public Config addRegion(Region region) {
 		regions.put(region.getAbbrev(), region);
 		return this;
 	}
 
-	private static Properties loadProperties(String propsPath) {
-		Properties prop = new Properties();
-		try (InputStream inputStream = Config.class.getResourceAsStream(propsPath)) {
-			prop.load(inputStream);
-			return prop;
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Resource file not found: '" + propsPath + "'", e);
-		} catch (IOException e) {
-			throw new RuntimeException("Error reading resource file: '" + propsPath + "'", e);
-		}
+	public Config addHoliday(Holiday...holidays) {
+		Arrays.stream(holidays).forEach(holiday -> this.holidays.put(holiday.getName(), holiday));
+		return this;
+	}
+
+	public Holidays	forRegion(Region region) {
+		return new HolidaysImpl(region);
 	}
 }

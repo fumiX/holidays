@@ -1,21 +1,24 @@
-package net.fumix.holidays;
+package net.fumix.holidays.impl;
 
+import net.fumix.holidays.DayCategory;
 import net.fumix.holidays.config.Holiday;
 import net.fumix.holidays.config.Region;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.*;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Cache {
 	final Region region;
 
-	final Map<Integer, LocalDate> easterCache = new HashMap<>();
-	final Map<Integer, Map<LocalDate, Holiday>> holidayMap = new HashMap<>();
-	final Map<Integer, LinkedHashMap<LocalDate, DayCategory>> yearCache = new HashMap<>();
+	final Map<Integer, LocalDate> easterCache = new ConcurrentHashMap<>();
+	final Map<Integer, Map<LocalDate, Holiday>> holidayMap = new ConcurrentHashMap<>();
 
 	public Cache(Region region) {
 		this.region = region;
@@ -31,27 +34,6 @@ public class Cache {
 	}
 
 	public DayCategory dayCategory(LocalDate date) {
-		final LinkedHashMap<LocalDate, DayCategory> daysOfYear = yearDate(date.getYear());
-		return daysOfYear.get(date);
-	}
-
-
-	LinkedHashMap<LocalDate, DayCategory> yearDate(int year) {
-		LinkedHashMap<LocalDate, DayCategory> daysOfYear = yearCache.get(year);
-		if (daysOfYear == null) {
-			daysOfYear = new LinkedHashMap<>();
-			LocalDate date = LocalDate.of(year, 1, 1);
-			for(int i = 1; i<= Year.of(year).length(); i++) {
-				daysOfYear.put(date, category(date));
-				date  = date.plusDays(1);
-			}
-			yearCache.put(year, daysOfYear);
-		}
-		return daysOfYear;
-
-	}
-
-	DayCategory category(LocalDate date) {
 		return at(date).map(d -> DayCategory.HOLIDAY)
 				.orElseGet(() -> {
 					if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {

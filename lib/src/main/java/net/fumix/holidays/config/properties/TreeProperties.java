@@ -1,20 +1,16 @@
-package net.fumix.holidays.config;
+package net.fumix.holidays.config.properties;
 
-import java.util.*;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class TreeProperties {
 
 	PropNode root = new PropNode("");
 
-	public static TreeProperties from(Properties props) {
+	public static TreeProperties from(Map<String, String> props) {
 		TreeProperties treeProps = new TreeProperties();
-
-		final Enumeration<?> propEnum = props.propertyNames();
-		while (propEnum.hasMoreElements()) {
-			String propKey = (String) propEnum.nextElement();
-			String value = props.getProperty(propKey);
-			treeProps.addProperty(propKey, value);
-		}
+		props.keySet().stream().forEach(key -> treeProps.addProperty(key, props.get(key)));
 		return treeProps;
 	}
 

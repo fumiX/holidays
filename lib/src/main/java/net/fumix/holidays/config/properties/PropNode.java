@@ -1,4 +1,4 @@
-package net.fumix.holidays.config;
+package net.fumix.holidays.config.properties;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

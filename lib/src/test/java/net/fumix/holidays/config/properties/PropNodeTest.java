@@ -1,5 +1,6 @@
-package net.fumix.holidays.config;
+package net.fumix.holidays.config.properties;
 
+import net.fumix.holidays.config.properties.PropNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
