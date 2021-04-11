@@ -1,5 +1,7 @@
 plugins {
     id 'java-library'
+    id 'signing'
+    id 'maven-publish'
 }
 
 group 'org.example'
@@ -7,6 +9,16 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+task javadocJar(type: Jar) {
+    classifier 'javadoc'
+    from javadoc
+}
+
 
 repositories {
     mavenCentral()
@@ -21,4 +33,29 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    def signingKey = findProperty("GPG_SIGNING_KEY")
+    def signingPassword = findProperty("GPG_SIGNING_KEY_PASSWORD")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+
+    sign configurations.archives
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = System.getenv("OSSRH_MAVEN_USERNAME")
+                password = System.getenv("OSSRH_MAVEN_PASSWORD")
+            }
+        }
+    }
 }
