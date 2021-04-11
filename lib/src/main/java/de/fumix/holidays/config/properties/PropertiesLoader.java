@@ -13,8 +13,8 @@ public class PropertiesLoader {
 	/**
 	 * Read a properties file from the resources, i.e. packaged with the application.
 	 *
-	 * @param propsPath
-	 * @param propConsumer Called with property key & value for the properties in the file (ordered).
+	 * @param propsPath Resource path to the properties file.
+	 * @param propConsumer Called with property key and value for the properties in the file (ordered).
 	 */
 	public static void load(String propsPath, BiConsumer<String, String> propConsumer) {
 		try (InputStream inputStream = Config.class.getResourceAsStream(propsPath)) {
@@ -30,11 +30,12 @@ public class PropertiesLoader {
 	/**
 	 * Read properties from a stream.
 	 *
-	 * @param inStream
-	 * @param propConsumer Called with property key & value for the properties read from the stream (ordered).
+	 * @param inStream Fresh input stream to the properties source (i.e. properties file).
+	 * @param propConsumer Called with property key and value for the properties read from the stream (ordered).
 	 */
 	public static void load(InputStream inStream, BiConsumer<String, String> propConsumer) throws IOException {
 
+		@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 		Properties properties = new Properties() {
 			public Object put(Object key, Object value) {
 				propConsumer.accept((String) key, (String) value);
