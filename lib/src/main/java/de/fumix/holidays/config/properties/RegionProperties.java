@@ -20,7 +20,6 @@ public class RegionProperties {
 	 * Creates a list of {@link Region}s from the properties map (initialized from a properties file).
 	 *
 	 * @param regionProperties Content of a properties file with region definitions.
-	 * @return The created region objects.
 	 */
 	public static void from(LinkedHashMap<String, String> regionProperties, Map<String, Holiday> holidays,
 	                        Consumer<Region> regionConsumer) {
