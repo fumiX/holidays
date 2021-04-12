@@ -76,19 +76,23 @@ publishing {
     // telling gradle to publish artifact to local directory (3)
     repositories {
         maven {
-            url "file:/${project.projectDir}/build/artifacts"
+            name = "Local"
+
+            def releasesRepoUrl = "file:/${project.projectDir}/build/artifacts/releases"
+            def snapshotsRepoUrl = "file:/${project.projectDir}/build/artifacts/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
-//        maven {
-//            name = "OSSRH"
-//
-//            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-//            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-//
-//            credentials {
-//                username = System.getenv("OSSRH_MAVEN_USERNAME")
-//                password = System.getenv("OSSRH_MAVEN_PASSWORD")
-//            }
-//        }
+        maven {
+            name = "OSSRH"
+
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = System.getenv("OSSRH_MAVEN_USERNAME")
+                password = System.getenv("OSSRH_MAVEN_PASSWORD")
+            }
+        }
     }
 }
