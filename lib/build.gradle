@@ -4,21 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-task sourcesJar(type: Jar) {
-    classifier 'sources'
-    from sourceSets.main.allJava
-}
-task javadocJar(type: Jar) {
-    classifier 'javadoc'
-    from javadoc
-}
-
 
 repositories {
     mavenCentral()
@@ -34,31 +22,73 @@ dependencies {
 
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 test {
     useJUnitPlatform()
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
 signing {
-    def signingKey = findProperty("GPG_SIGNING_KEY")
-    def signingPassword = findProperty("GPG_SIGNING_KEY_PASSWORD")
+    def signingKey = findProperty("GPG_SIGNING_KEY") // ORG_GRADLE_PROJECT_GPG_SIGNING_KEY -> ascii armored private PGP key
+    def signingPassword = findProperty("GPG_SIGNING_KEY_PASSWORD") // ORG_GRADLE_PROJECT_GPG_SIGNING_KEY_PASSWORD
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign configurations.archives
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "OSSRH"
-            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials {
-                username = System.getenv("OSSRH_MAVEN_USERNAME")
-                password = System.getenv("OSSRH_MAVEN_PASSWORD")
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = "holidays"
+            version = project.version
+
+            from components.java
+
+            pom {
+                name = "holidays"
+                description = "Legal holidays, weekends, workdays by date (for Germany, but extendable)"
+                url = "https://github.com/fumiX/holidays"
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'michael-fuchs'
+                        name = 'Michael Fuchs'
+                        email = 'michael.fuchs@fumix.de'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/fumix/holidays.git'
+                    developerConnection = 'scm:git:git@github.com:fumix/holidays.git'
+                    url = 'https://github.com/fumix/holidays'
+                }
             }
         }
+    }
+    // telling gradle to publish artifact to local directory (3)
+    repositories {
+        maven {
+            url "file:/${project.projectDir}/build/artifacts"
+        }
+//        maven {
+//            name = "OSSRH"
+//
+//            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//
+//            credentials {
+//                username = System.getenv("OSSRH_MAVEN_USERNAME")
+//                password = System.getenv("OSSRH_MAVEN_PASSWORD")
+//            }
+//        }
     }
 }

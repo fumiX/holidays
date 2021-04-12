@@ -1,9 +1,14 @@
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+
 
 subprojects {
-//    sourceCompatibility = 1.8
-//    targetCompatibility = 1.8
+    def releaseVersion = System.getenv("CI_RELEASE_VERSION")
+    def runId = System.getenv("GITHUB_RUN_ID")
+
+    version = releaseVersion != null ? releaseVersion
+            : runId != null ? "build-${runId}-SNAPSHOT"
+            : "LOCAL-SNAPSHOT"
+
+    group 'de.fumix'
 }
 
