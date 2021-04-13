@@ -16,5 +16,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'net.fumix.holidays.Main'
+    mainClass = 'de.fumix.holidays.HolidayApp'
 }

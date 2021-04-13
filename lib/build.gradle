@@ -31,27 +31,30 @@ test {
     useJUnitPlatform()
 }
 
+artifacts {
+    archives jar, sourcesJar, javadocJar
+}
+
+
 signing {
     def signingKey = findProperty("GPG_SIGNING_KEY") // ORG_GRADLE_PROJECT_GPG_SIGNING_KEY -> ascii armored private PGP key
     def signingPassword = findProperty("GPG_SIGNING_KEY_PASSWORD") // ORG_GRADLE_PROJECT_GPG_SIGNING_KEY_PASSWORD
     useInMemoryPgpKeys(signingKey, signingPassword)
 
-    sign configurations.archives
+    sign publishing.publications
 }
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
             groupId = project.group
             artifactId = "holidays"
             version = project.version
-
-            from components.java
-
             pom {
                 name = "holidays"
                 description = "Legal holidays, weekends, workdays by date (for Germany, but extendable)"
                 url = "https://github.com/fumiX/holidays"
+                from components.java
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
