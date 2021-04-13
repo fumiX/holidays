@@ -20,10 +20,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle7-
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build sign publish
         env:
           ORG_GRADLE_PROJECT_GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           ORG_GRADLE_PROJECT_GPG_SIGNING_KEY_PASSWORD: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}
+          OSSRH_MAVEN_USERNAME: ${{ secrets.OSSRH_MAVEN_USERNAME }}
+          OSSRH_MAVEN_PASSWORD: ${{ secrets.OSSRH_MAVEN_PASSWORD }}
       - name: Cleanup Gradle Cache
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
