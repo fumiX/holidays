@@ -5,10 +5,10 @@ subprojects {
     def releaseVersion = System.getenv("CI_RELEASE_VERSION")
     def runId = System.getenv("GITHUB_RUN_ID")
 
-    version = releaseVersion != null ? releaseVersion
+    version = releaseVersion != null && releaseVersion ==~ '\\d+\\.\\d+\\.\\d+' ? releaseVersion
             : runId != null ? "build-${runId}-SNAPSHOT"
             : "LOCAL-SNAPSHOT"
-
+    logger.info("Build-Version ${version}")
     group 'de.fumix'
 }
 
