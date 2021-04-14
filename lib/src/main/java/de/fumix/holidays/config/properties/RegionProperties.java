@@ -20,6 +20,8 @@ public class RegionProperties {
 	 * Creates a list of {@link Region}s from the properties map (initialized from a properties file).
 	 *
 	 * @param regionProperties Content of a properties file with region definitions.
+	 * @param holidays Map with the Holiday objects, keyed by the holidays' ids.
+	 * @param regionConsumer Consumer for the created {@link Region} objects, e.g. List::add.
 	 */
 	public static void from(LinkedHashMap<String, String> regionProperties, Map<String, Holiday> holidays,
 	                        Consumer<Region> regionConsumer) {

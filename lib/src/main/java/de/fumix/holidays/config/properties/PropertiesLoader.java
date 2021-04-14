@@ -35,6 +35,8 @@ public class PropertiesLoader {
 	 *
 	 * @param inStream Fresh input stream to the properties source (i.e. properties file).
 	 * @param propConsumer Called with property key and value for the properties read from the stream (ordered).
+	 *
+	 * @throws IOException on probles with the properties file's stream
 	 */
 	public static void load(InputStream inStream, BiConsumer<String, String> propConsumer) throws IOException {
 

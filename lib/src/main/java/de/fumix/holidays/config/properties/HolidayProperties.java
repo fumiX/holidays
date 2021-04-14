@@ -19,6 +19,7 @@ public class HolidayProperties {
 	 * Creates a list of {@link Holiday}s from the properties map (initialized from a properties file).
 	 *
 	 * @param holidayProperties Content of a properties file with holiday definitions.
+	 * @param holidayConsumer Consumer for the created {@link Holiday} object, e.g. List::add.
 	 */
 	public static void from(LinkedHashMap<String, String> holidayProperties, Consumer<Holiday> holidayConsumer) {
 		final String logPrefix = "[from()]";
