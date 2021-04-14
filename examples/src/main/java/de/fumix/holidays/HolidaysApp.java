@@ -1,7 +1,6 @@
 package de.fumix.holidays;
 
 import de.fumix.holidays.config.Config;
-import de.fumix.holidays.config.Holiday;
 import de.fumix.holidays.config.Region;
 import de.fumix.holidays.impl.HolidaysImpl;
 import org.slf4j.Logger;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Check, if given dates are holidays. Loads the holiday and region information from the resources (i.e. German and
@@ -26,6 +27,11 @@ public class HolidaysApp {
 		final String logPrefix = "[main()]";
 
 		Config config = Config.fromResources();
+		ResourceBundle holidaysBundle = Config.getHolidaysBundle(Locale.getDefault());
+
+		config.getRegions().stream().forEach(r -> {
+			System.out.println(r.getName(holidaysBundle) + " : " + r.getRegionId());
+		});
 
 		final DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
 		final Region region = config.regionOf(args[0]).orElseThrow(() -> new IllegalArgumentException("Undefined region '" + args[0] + "'"));
@@ -37,7 +43,7 @@ public class HolidaysApp {
 			final LocalDate date = LocalDate.parse(args[i], df);
 			final DayCategory cat = holidays.dayCategory(date);
 			System.out.println(args[i] + ": " + cat
-					+ ": " + holidays.at(date).map(Holiday::getName).orElse(date.getDayOfWeek().toString())
+					+ ": " + holidays.at(date).map(h -> h.getName(holidaysBundle)).orElse(date.getDayOfWeek().toString())
 			);
 		}
 	}

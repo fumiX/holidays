@@ -31,7 +31,7 @@ public class HolidaysProgrammaticConfigApp {
 		final Holiday alice = Holiday.atDate("Alice", 12, 3);
 		final Holiday bob = Holiday.atDate("Bob", 11, 20);
 
-		final Region birthdays = new Region("Birthdays", Optional.empty(), "birthdays");
+		final Region birthdays = new Region(Optional.empty(), "birthdays");
 		birthdays.withHoliday(alice, Optional.of(1942), Optional.empty()); // Alice was born 1942 and is alive.
 		birthdays.withHoliday(bob, Optional.of(1925), Optional.of(1967)); // Bob was born 1925, but died 1968 before his birthday.
 
@@ -41,7 +41,7 @@ public class HolidaysProgrammaticConfigApp {
 		final Holiday eggPainting = Holiday.fromEaster("Egg-Painting-Day", -7); // Point the eggs a week before easter.
 		final Holiday eggEating = Holiday.fromEaster("Egg-Eating-Day", 3); // Finaly eat them on Wednesday after easter.
 
-		final Region fundays = new Region("Birthdays", Optional.of(birthdays), "fundays"); // birthdays are fundays, too.
+		final Region fundays = new Region(Optional.of(birthdays), "fundays"); // birthdays are fundays, too.
 		fundays.withHoliday(eggPainting);
 		fundays.withHoliday(eggEating);
 
@@ -59,7 +59,7 @@ public class HolidaysProgrammaticConfigApp {
 			final LocalDate date = LocalDate.parse(args[i], df);
 			final DayCategory cat = holidays.dayCategory(date);
 			System.out.println(args[i] + ": " + cat
-					+ ": " + holidays.at(date).map(Holiday::getName).orElse(date.getDayOfWeek().toString())
+					+ ": " + holidays.at(date).map(Holiday::getHolidayId).orElse(date.getDayOfWeek().toString())
 			);
 		}
 	}

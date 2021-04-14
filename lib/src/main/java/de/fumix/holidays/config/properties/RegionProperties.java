@@ -35,10 +35,7 @@ public class RegionProperties {
 				.orElse(Collections.emptyList());
 
 		for (PropNode regionNode : regionNodes) {
-			final String regionKey = regionNode.getName();
-			final String regionName = regionNode.get("name")
-					.flatMap(PropNode::getValue)
-					.orElseThrow(() -> new IllegalArgumentException("region-properties: Region " + regionKey + " must have a 'name'"));
+			final String regionKey = regionNode.getKey();
 
 			final Optional<Region> parent = regionNode.get("parent")
 					.flatMap(PropNode::getValue)
@@ -50,16 +47,16 @@ public class RegionProperties {
 							return parentRegion;
 						}
 					});
-			Region region = new Region(regionName, parent, regionKey);
+			Region region = new Region(parent, regionKey);
 
 			LOG.debug("{} Setting up region {}", logPrefix, region);
 			final Collection<PropNode> regionHolidayNodes = regionNode.get("holiday")
 					.map(PropNode::getChildren)
 					.orElse(Collections.emptyList());
 			for (PropNode rhn : regionHolidayNodes) {
-				final Holiday holiday = holidays.get(rhn.getName());
+				final Holiday holiday = holidays.get(rhn.getKey());
 				if (holiday == null) {
-					throw new IllegalArgumentException("Holiday '" + rhn.getName() + "' referred to for region '" + regionKey + "' is not defined.");
+					throw new IllegalArgumentException("Holiday '" + rhn.getKey() + "' referred to for region '" + regionKey + "' is not defined.");
 				}
 
 				// TODO: process valid year ranges.
@@ -83,14 +80,14 @@ public class RegionProperties {
 							continue;
 						}
 
-						throw new IllegalArgumentException("Validity expression '" + rangeExpr + "' for holiday assignment for region '" + region.getAbbrev() + "' and holiday '" + holiday.getName() + "' is invalid.");
+						throw new IllegalArgumentException("Validity expression '" + rangeExpr + "' for holiday assignment for region '" + region.getRegionId() + "' and holiday '" + holiday.getHolidayId() + "' is invalid.");
 					}
 				} else {
 					// The holiday has no range expression and is always valid.
 					region.withHoliday(holiday);
 				}
 			}
-			cachedRegions.put(region.abbrev, region);
+			cachedRegions.put(region.regionId, region);
 			regionConsumer.accept(region);
 		}
 	}

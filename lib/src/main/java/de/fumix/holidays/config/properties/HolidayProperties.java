@@ -31,7 +31,7 @@ public class HolidayProperties {
 
 		holidayNodes.stream()
 				.filter(hn -> hn.getValue().isPresent())
-				.map(hn -> Holiday.fromConfig(hn.getName(), hn.getValue().get()))
+				.map(hn -> Holiday.fromConfig(hn.getKey(), hn.getValue().get()))
 				.peek(h -> LOG.debug("{} Loaded holiday: {}", logPrefix, h))
 				.forEach(holidayConsumer);
 	}

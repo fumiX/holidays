@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,22 +19,22 @@ public abstract class Holiday {
 	public abstract LocalDate atDate(int year, Cache cache) ;
 
 
-	public final String name;
-	public String getName() { return name; }
+	public final String holidayId;
+	public String getHolidayId() { return holidayId; }
 
 
-	public static Holiday fromConfig(String name, String expression) {
+	public static Holiday fromConfig(String id, String expression) {
 		final Matcher fixedDateMatcher = fixedDatePattern.matcher(expression);
 		if (fixedDateMatcher.matches()) {
 			int month = Integer.parseInt(fixedDateMatcher.group(1));
 			int day = Integer.parseInt(fixedDateMatcher.group(2));
-			return new FixedDateHoliday(name, month, day);
+			return new FixedDateHoliday(id, month, day);
 		}
 
 		final Matcher easterMatcher = easterRelativePattern.matcher(expression);
 		if (easterMatcher.matches()) {
 			int offset = Integer.parseInt(easterMatcher.group(1));
-			return new EasterRelativeHoliday(name, offset);
+			return new EasterRelativeHoliday(id, offset);
 		}
 
 		final Matcher weekdayRelMatcher = weekdayRelPattern.matcher(expression);
@@ -42,14 +43,14 @@ public abstract class Holiday {
 			String op = weekdayRelMatcher.group(2);
 			String month = weekdayRelMatcher.group(3);
 			String day = weekdayRelMatcher.group(4);
-			return new WeekdayRelativeHoliday(name,
+			return new WeekdayRelativeHoliday(id,
 					DayOfWeek.valueOf(wd.toUpperCase(Locale.ROOT)),
 					op.equals("<"),
 					Integer.parseInt(month),
 					Integer.parseInt(day));
 		}
 
-		throw new IllegalArgumentException("Invalid holiday pattern for '" + name + "': '" + expression + "'");
+		throw new IllegalArgumentException("Invalid holiday pattern for '" + id + "': '" + expression + "'");
 	}
 
 	public static Holiday atDate(String name, int month, int day) {
@@ -60,8 +61,12 @@ public abstract class Holiday {
 		return new EasterRelativeHoliday(name, offset);
 	}
 
-	Holiday(String name) {
-		this.name = name;
+	Holiday(String holidayId) {
+		this.holidayId = holidayId;
+	}
+
+	public String getName(ResourceBundle holidaysBundle) {
+		return holidaysBundle.getString("holiday." + holidayId);
 	}
 
 	public static class FixedDateHoliday extends Holiday {
@@ -82,7 +87,7 @@ public abstract class Holiday {
 		@Override
 		public String toString() {
 			return "FixedDateHoliday{" +
-					"name='" + name + '\'' +
+					"name='" + holidayId + '\'' +
 					", month=" + month +
 					", day=" + day +
 					'}';
@@ -105,7 +110,7 @@ public abstract class Holiday {
 		@Override
 		public String toString() {
 			return "EasterRelativeHoliday{" +
-					"name='" + name + '\'' +
+					"name='" + holidayId + '\'' +
 					", dayOffset=" + dayOffset +
 					'}';
 		}
@@ -150,7 +155,7 @@ public abstract class Holiday {
 		@Override
 		public String toString() {
 			return "WeekdayRelativeHoliday{" +
-					"name='" + name + '\'' +
+					"name='" + holidayId + '\'' +
 					", dayOfWeek=" + dayOfWeek +
 					", before=" + before +
 					", month=" + month +

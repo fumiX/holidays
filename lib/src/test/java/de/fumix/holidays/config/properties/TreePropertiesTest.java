@@ -24,12 +24,12 @@ class TreePropertiesTest {
 
 		final PropNode foo1 = propNodeArr[0];
 		assertNotNull(foo1);
-		assertEquals("FOO", foo1.getName());
+		assertEquals("FOO", foo1.getKey());
 		assertEquals("foo", foo1.getValue().get());
 
 		final PropNode bar1 = propNodeArr[1];
 		assertNotNull(bar1);
-		assertEquals("BAR", bar1.getName());
+		assertEquals("BAR", bar1.getKey());
 		assertEquals("bar", bar1.getValue().get());
 
 	}

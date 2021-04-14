@@ -3,24 +3,21 @@ package de.fumix.holidays.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 public class Region {
-	public final String name;
 	public final Optional<Region> parent;
-	public final String abbrev;
+	public final String regionId;
 	public final List<HolidayRange> holidays = new ArrayList<>();
 
-	public String getName() {
-		return name;
-	}
 
 	public Optional<Region> getParent() {
 		return parent;
 	}
 
-	public String getAbbrev() {
-		return abbrev;
+	public String getRegionId() {
+		return regionId;
 	}
 
 	public List<HolidayRange> getHolidays() {
@@ -39,10 +36,9 @@ public class Region {
 		}
 	}
 
-	public Region(String name, Optional<Region> parent, String abbrev) {
-		this.name = name;
+	public Region(Optional<Region> parent, String abbrev) {
 		this.parent = parent;
-		this.abbrev = abbrev;
+		this.regionId = abbrev;
 		parent.map(Region::getHolidays).ifPresent(parentHolidays -> this.holidays.addAll(parentHolidays));
 	}
 
@@ -56,6 +52,10 @@ public class Region {
 		return this;
 	}
 
+	public String getName(ResourceBundle holidaysBundle) {
+		return holidaysBundle.getString("region." + regionId);
+	}
+
 	public Stream<Holiday> holidaysIn(int year) {
 		return holidays.stream()
 				.filter(h -> !h.fromYear.isPresent() || h.fromYear.get() <= year)
@@ -66,8 +66,7 @@ public class Region {
 	@Override
 	public String toString() {
 		return "Region{" +
-				"name=" + name +
-				", abbrev=" + abbrev +
+				", abbrev=" + regionId +
 				'}';
 	}
 }

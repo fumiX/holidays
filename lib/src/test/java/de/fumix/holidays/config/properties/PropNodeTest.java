@@ -16,7 +16,7 @@ class PropNodeTest {
 		PropNode test = holiday.getCreateChild("TEST");
 		test.value = Optional.of("05-13");
 
-		assertEquals("", root.getName());
+		assertEquals("", root.getKey());
 		assertNotNull(root.get("holiday"));
 		final Optional<PropNode> testNode = root.get("holiday.TEST");
 		assertTrue(testNode.isPresent());
@@ -46,12 +46,12 @@ class PropNodeTest {
 
 		final PropNode foo1 = propNodeArr[0];
 		assertNotNull(foo1);
-		assertEquals("FOO", foo1.getName());
+		assertEquals("FOO", foo1.getKey());
 		assertEquals("05-13", foo1.getValue().get());
 
 		final PropNode bar1 = propNodeArr[1];
 		assertNotNull(bar1);
-		assertEquals("BAR", bar1.getName());
+		assertEquals("BAR", bar1.getKey());
 		assertEquals("05-14", bar1.getValue().get());
 	}
 

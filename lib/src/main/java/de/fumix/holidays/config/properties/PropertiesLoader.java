@@ -18,6 +18,9 @@ public class PropertiesLoader {
 	 */
 	public static void load(String propsPath, BiConsumer<String, String> propConsumer) {
 		try (InputStream inputStream = Config.class.getResourceAsStream(propsPath)) {
+			if (inputStream == null) {
+				throw new IllegalArgumentException("Property file not found on classpath: '" + propsPath + "'");
+			}
 			load(inputStream, propConsumer);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("Resource file not found: '" + propsPath + "'", e);

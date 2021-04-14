@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,8 +21,7 @@ class HolidayTest {
 
 	@Test
 	void weekdayRelHoliday() {
-		Config config = new Config();
-		Region region = new Region("Testland", Optional.empty(), "TE");
+		Region region = new Region(Optional.empty(), "TE");
 		Cache cache = new Cache(region);
 
 		Holiday.WeekdayRelativeHoliday h = new Holiday.WeekdayRelativeHoliday("TEST", DayOfWeek.WEDNESDAY, true, 4, 4); // 2021: Sunday

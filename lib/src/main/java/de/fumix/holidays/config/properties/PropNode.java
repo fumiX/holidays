@@ -5,12 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 
 class PropNode {
-	final String name;
+	final String key;
 	Optional<String> value;
 	LinkedHashMap<String, PropNode> children = new LinkedHashMap<>();
 
-	PropNode(String name) {
-		this.name = name;
+	PropNode(String key) {
+		this.key = key;
 		this.value = Optional.empty();
 	}
 
@@ -44,8 +44,8 @@ class PropNode {
 		return Optional.ofNullable(pn);
 	}
 
-	public String getName() {
-		return name;
+	public String getKey() {
+		return key;
 	}
 	public Optional<String> getValue() {
 		return value;
@@ -54,7 +54,7 @@ class PropNode {
 	@Override
 	public String toString() {
 		return "PropNode{" +
-				"name='" + name + '\'' +
+				"key='" + key + '\'' +
 				", value=" + value +
 				", children=" + (children != null ? children.size() : "[null]") +
 				'}';

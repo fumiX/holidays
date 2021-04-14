@@ -8,9 +8,7 @@ import de.fumix.holidays.impl.HolidaysImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class Config {
 	private static final Logger LOG = LoggerFactory.getLogger(Config.class);
@@ -29,6 +27,10 @@ public class Config {
 	}
 	public Optional<Holiday> holidayOf(String abbrev) { return Optional.ofNullable(holidays.get(abbrev)); }
 
+
+	public static ResourceBundle getHolidaysBundle(Locale locale) {
+		return ResourceBundle.getBundle("holidays.holidays");
+	}
 
 	public static Config fromResources() {
 		final String logPrefix = "[fromResources()]";
@@ -57,13 +59,17 @@ public class Config {
 	}
 
 	public Config addRegion(Region region) {
-		regions.put(region.getAbbrev(), region);
+		regions.put(region.getRegionId(), region);
 		return this;
 	}
 
 	public Config addHoliday(Holiday...holidays) {
-		Arrays.stream(holidays).forEach(holiday -> this.holidays.put(holiday.getName(), holiday));
+		Arrays.stream(holidays).forEach(holiday -> this.holidays.put(holiday.getHolidayId(), holiday));
 		return this;
+	}
+
+	public List<Region> getRegions() {
+		return new ArrayList<>(regions.values());
 	}
 
 	public Holidays	forRegion(Region region) {
