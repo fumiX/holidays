@@ -14,9 +14,9 @@ public class Config {
 	private static final Logger LOG = LoggerFactory.getLogger(Config.class);
 
 	// Resource paths to the configuration.
-	final static String HOLIDAY_PROPERTIES = "/holiday.properties";
-	final static String REGION_DE_PROPERTIES = "/region_DE.properties";
-	final static String REGION_AT_PROPERTIES = "/region_AT.properties";
+	final static String HOLIDAY_PROPERTIES = "/de/fumix/holidays/holiday.properties";
+	final static String REGION_DE_PROPERTIES = "/de/fumix/holidays/region_DE.properties";
+	final static String REGION_AT_PROPERTIES = "/de/fumix/holidays/region_AT.properties";
 
 
 	final LinkedHashMap<String, Holiday> holidays;
@@ -29,7 +29,7 @@ public class Config {
 
 
 	public static ResourceBundle getHolidaysBundle(Locale locale) {
-		return ResourceBundle.getBundle("holidays.holidays");
+		return ResourceBundle.getBundle("de.fumix.holidays.messages");
 	}
 
 	public static Config fromResources() {
