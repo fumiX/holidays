@@ -1,14 +1,18 @@
 package de.fumix.holidays.config.properties;
 
 import de.fumix.holidays.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
 public class PropertiesLoader {
+	private static final Logger LOG = LoggerFactory.getLogger(PropertiesLoader.class);
 
 	/**
 	 * Read a properties file from the resources, i.e. packaged with the application.
@@ -17,7 +21,11 @@ public class PropertiesLoader {
 	 * @param propConsumer Called with property key and value for the properties in the file (ordered).
 	 */
 	public static void load(String propsPath, BiConsumer<String, String> propConsumer) {
-		try (InputStream inputStream = Config.class.getResourceAsStream(propsPath)) {
+		final String logPrefix = "[load()]";
+
+		final URL resource = PropertiesLoader.class.getResource(propsPath);
+		LOG.debug("{} Loading property resources '{}'", logPrefix, resource);
+		try (InputStream inputStream = resource.openStream()) {
 			if (inputStream == null) {
 				throw new IllegalArgumentException("Property file not found on classpath: '" + propsPath + "'");
 			}

@@ -14,9 +14,9 @@ public class Config {
 	private static final Logger LOG = LoggerFactory.getLogger(Config.class);
 
 	// Resource paths to the configuration.
-	final static String HOLIDAY_PROPERTIES = "classpath:/holiday.properties";
-	final static String REGION_DE_PROPERTIES = "classpath:/region_DE.properties";
-	final static String REGION_AT_PROPERTIES = "classpath:/region_AT.properties";
+	final static String HOLIDAY_PROPERTIES = "/holiday.properties";
+	final static String REGION_DE_PROPERTIES = "/region_DE.properties";
+	final static String REGION_AT_PROPERTIES = "/region_AT.properties";
 
 
 	final LinkedHashMap<String, Holiday> holidays;
