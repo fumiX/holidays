@@ -20,6 +20,9 @@
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+# Sonarlint, not used in this project
+.idea/sonarlint
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
